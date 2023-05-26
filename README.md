@@ -1,2 +1,2 @@
 # mini-args
-A simple library for argument parsing for C.
+A simple library for argument parsing in C.
