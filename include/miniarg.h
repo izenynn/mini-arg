@@ -29,6 +29,6 @@ struct miniarg {
 	const char *doc;
 };
 
-void miniarg_parse();
+void miniarg_parse(struct miniarg *miniarg, int argc, char **argv, void *input);
 
 #endif // MINIARG_MINIARG_H_
