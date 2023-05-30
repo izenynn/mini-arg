@@ -41,7 +41,8 @@ INC_DIR = include
 # **************************************************************************** #
 
 SRC_FILES = \
-	miniarg.c		\
+	miniarg.c			\
+	miniarg_utils.c		\
 
 OBJ_FILES = $(SRC_FILES:%.c=%.o)
 

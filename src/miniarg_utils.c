@@ -24,27 +24,44 @@ int ma_strncmp(const char *s1, const char *s2, size_t n)
 		return 0;
 }
 
-void print_option(const struct miniarg_option *opt)
+inline void print_opt(const struct marg_option *opt)
 {
 	printf("    -%c, --%-20s %s\n", opt->key, opt->name, opt->description);
 }
 
-void print_usage(const struct miniarg *miniarg, const struct miniarg_option *opt)
+void print_options(const struct marg *const marg, const struct marg_option *opt)
 {
-	printf("Usage: [OPTIONS...] %s\n", miniarg->args_doc);
 	if (opt == NULL) {
-		for (opt = miniarg->options; opt->name != NULL; ++opt) {
-			print_option(opt);
+		for (opt = marg->options; opt->name != NULL; ++opt) {
+			print_opt(opt);
 		}
 	} else {
-		print_option(opt);
+		print_opt(opt);
 	}
 }
 
-void error_exit(const struct miniarg *miniarg, const struct miniarg_option *opt, const char* error_msg)
+void print_usage(const struct marg *const marg)
+{
+	printf("Usage: [OPTIONS...] %s\n", marg->args_doc);
+}
+
+void error_exit(const struct marg *const marg, const struct marg_option *opt, const char* error_msg)
 {
 	if (error_msg != NULL)
 		fprintf(stderr, "%s\n", error_msg);
-	print_usage(miniarg, opt);
+	print_usage(marg);
+	print_options(marg, opt);
+	exit(1);
+}
+
+void marg_usage(struct marg_state *state)
+{
+	print_usage(state->root_marg);
+	exit(1);
+}
+
+void marg_error(struct marg_state *state, const char *msg)
+{
+	fprintf(stderr, "%s: %s\nTry '%s --help'", state->argv[0], msg, state->argv[0]);
 	exit(1);
 }

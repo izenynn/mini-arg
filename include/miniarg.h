@@ -3,19 +3,19 @@
 
 #include <stdbool.h>
 
-extern const char *miniarg_program_version;
-extern const char *miniarg_program_bug_address;
+extern const char *marg_program_version;
+extern const char *marg_program_bug_address;
 
-enum miniarg_option_flags {
+enum marg_option_flags {
 	NONE = 0,
 	OPTION_REQUIRED		= (1 << 0),
 	OPTION_ARG		= (1 << 1),
 	OPTION_ARG_REQUIRED	= (1 << 2),
-	MINIARG_ARG = -1,
-	MINIARG_END = -2
+	MARG_KEY_ARG = -1,
+	MARG_KEY_END = -2
 };
 
-struct miniarg_option {
+struct marg_option {
 	const int key;
 	const char *name;
 	const char *arg;
@@ -24,21 +24,22 @@ struct miniarg_option {
 	const char* description;
 };
 
-struct miniarg_state {
+struct marg_state {
+	const struct marg *const root_marg;
 	int argc;
-	int arg_num; // keep track of number of normal arguments
 	char **argv;
 	int next;
+	int arg_num;
 	void *input;
 };
 
-struct miniarg {
-	struct miniarg_option *options;
-	int (*parse_opt)(int key, const char *arg, struct miniarg_state *state);
+struct marg {
+	struct marg_option *options;
+	int (*parse_opt)(int key, const char *arg, struct marg_state *state);
 	const char *args_doc;
 	const char *doc;
 };
 
-void miniarg_parse(struct miniarg *miniarg, int argc, char **argv, void *input);
+void marg_parse(struct marg *marg, int argc, char **argv, void *input);
 
 #endif // MINIARG_MINIARG_H_
