@@ -119,7 +119,7 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 		state.arg_num++;
 	}
 
-	// Check if required argumentss are set
+	// Check if required options are set
 	for(struct marg_option *opt = marg->options; opt->key != 0; ++opt) {
 		if((opt->flags & OPTION_REQUIRED) && !opt->is_set) {
 			static_marg_error(marg, opt, "Error: Missing required argument");
