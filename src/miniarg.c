@@ -32,7 +32,7 @@ static void handle_long_option(const struct marg* marg, const char* arg, struct 
 	struct marg_option *opt;
 	size_t len = marg_strlen(arg + 2) + 1;
 
-	for(opt = marg->options; opt != NULL; ++opt) {
+	for(opt = marg->options; opt->key != 0; ++opt) {
 		if(marg_strncmp(opt->name, arg + 2, len) == 0) {
 			if((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG) && state->next < state->argc && state->argv[state->next][0] != '-') {
 				opt->arg = state->argv[++state->next];
@@ -55,7 +55,7 @@ static void handle_short_option(const struct marg* marg, const char* arg, struct
 	struct marg_option *opt;
 
 	for (const char *p = arg + 1; *p != '\0'; ++p) {
-		for(opt = marg->options; opt != NULL; ++opt) {
+		for(opt = marg->options; opt->key != 0; ++opt) {
 			if(opt->key == *p) {
 				if((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG) && *(p + 1) == '\0' && state->next < state->argc && state->argv[state->next][0] != '-') {
 					opt->arg = state->argv[++state->next];
@@ -120,7 +120,7 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 	}
 
 	// Check if required argumentss are set
-	for(struct marg_option *opt = marg->options; opt != NULL; ++opt) {
+	for(struct marg_option *opt = marg->options; opt->key != 0; ++opt) {
 		if((opt->flags & OPTION_REQUIRED) && !opt->is_set) {
 			static_marg_error(marg, opt, "Error: Missing required argument");
 		}

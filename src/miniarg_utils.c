@@ -10,7 +10,7 @@ static inline void print_opt(const struct marg_option *opt)
 static void print_options(const struct marg *const marg, const struct marg_option *opt)
 {
 	if (opt == NULL) {
-		for (opt = marg->options; opt->name != NULL; ++opt) {
+		for (opt = marg->options; opt->key != 0; ++opt) {
 			print_opt(opt);
 		}
 	} else {
