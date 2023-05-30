@@ -55,7 +55,9 @@ static void handle_long_option(const struct marg* marg, const char* arg, struct 
 					// THIS SHIT
 					static_marg_error(marg, opt, state, "unexpected value for argument");
 			} else {
-				if ((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG) && state->next < state->argc && state->argv[state->next][0] != '-')
+				if ((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG)
+						&& (state->next + 1) < state->argc
+						&& state->argv[state->next + 1][0] != '-')
 					opt->arg = state->argv[++state->next];
 				else if (opt->flags & OPTION_ARG_REQUIRED)
 					static_marg_error(marg, opt, state, "missing value for argument");
@@ -82,8 +84,8 @@ static void handle_short_option(const struct marg* marg, const char* arg, struct
 					if (*(p + 1) != '\0') {
 						opt->arg = p + 1;
 						while(*(p + 1) != '\0') ++p;
-					} else if (state->next < state->argc
-							&& state->argv[state->next][0] != '-') {
+					} else if ((state->next + 1) < state->argc
+							&& state->argv[state->next + 1][0] != '-') {
 						opt->arg = state->argv[++state->next];
 					} else if (opt->flags & OPTION_ARG_REQUIRED) {
 						static_marg_error(marg, opt, state, "unexpected argument or missing value");
