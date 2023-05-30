@@ -4,6 +4,7 @@
 
 static inline void print_opt(const struct marg_option *opt)
 {
+	// TODO THE =VALUE PRINTS AT THE RIGHT
 	if(opt->flags & OPTION_ARG || opt->flags & OPTION_ARG_REQUIRED)
 		printf("  -%c, --%-20s=VALUE %s\n", opt->key, opt->name, opt->description);
 	else

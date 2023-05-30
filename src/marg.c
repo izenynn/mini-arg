@@ -52,7 +52,7 @@ static void handle_long_option(const struct marg* marg, const char* arg, struct 
 				if (opt->flags & OPTION_ARG || opt->flags & OPTION_ARG_REQUIRED)
 					opt->arg = equal_pos + 1;
 				else
-					// THIS SHIT
+					// TODO THIS SHIT PRINTS SHIT
 					static_marg_error(marg, opt, state, "unexpected value for argument");
 			} else {
 				if ((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG)
