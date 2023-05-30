@@ -9,7 +9,7 @@ static inline void print_opt(const struct marg_option *opt)
 
 static void print_options(const struct marg *const marg, const struct marg_option *opt)
 {
-	printf("%s\n\n Options:\n", marg->doc);
+	printf("%s\n\n", marg->doc);
 	if (opt == NULL) {
 		for (opt = marg->options; opt->key != 0; ++opt) {
 			print_opt(opt);
@@ -17,6 +17,7 @@ static void print_options(const struct marg *const marg, const struct marg_optio
 	} else {
 		print_opt(opt);
 	}
+	printf("\nMandatory or optional arguments to long options are also mandatory or optional\nfor any corresponding short options.\n");
 	printf("\nReport bugs to %s.\n", marg_program_bug_address);
 }
 
