@@ -44,7 +44,7 @@ static char *marg_strchr(const char *s, int c)
 static void handle_long_option(const struct marg* marg, const char* arg, struct marg_state* state) {
 	struct marg_option *opt;
 	const char *equal_pos = marg_strchr(arg, '=');
-	size_t len = equal_pos ? (equal_pos - arg - 2) : marg_strlen(arg + 2);
+	size_t len = equal_pos ? (size_t)(equal_pos - arg - 2) : marg_strlen(arg + 2);
 
 	for(opt = marg->options; opt->key != 0; ++opt) {
 		if(marg_strncmp(opt->name, arg + 2, len) == 0 && (opt->name[len] == '\0' || opt->name[len] == '=')) {
