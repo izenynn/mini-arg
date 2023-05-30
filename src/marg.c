@@ -1,11 +1,14 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sysexits.h>
 #include "miniarg.h"
 
 void static_marg_usage(const struct marg *const marg);
 void static_marg_help(const struct marg *const marg);
 void static_marg_error(const struct marg *const marg, const struct marg_option *opt, const struct marg_state *const state, const char* error_msg);
+
+int marg_err_exit_status = EX_USAGE;
 
 size_t marg_strlen(const char *s)
 {
@@ -95,10 +98,10 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 		
 		if(marg_strncmp(argv[state.next], "-h", 3) == 0 || marg_strncmp(argv[state.next], "--help", 7) == 0) {
 			static_marg_help(marg);
-			exit(0);
+			exit(EX_OK);
 		} else if(marg_strncmp(argv[state.next], "-V", 3) == 0 || marg_strncmp(argv[state.next], "--version", 10) == 0) {
 			printf("%s\n", marg_program_version);
-			exit(0);
+			exit(EX_OK);
 		} else if(argv[state.next][0] == '-') {
 			if(argv[state.next][1] == '-')
 				handle_long_option(marg, argv[state.next], &state);
@@ -132,7 +135,7 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 void marg_usage(struct marg_state *state)
 {
 	static_marg_usage(state->root_marg);
-	exit(1);
+	exit(marg_err_exit_status);
 }
 
 void marg_error(struct marg_state *state, const char *const msg)
@@ -141,5 +144,5 @@ void marg_error(struct marg_state *state, const char *const msg)
 		state->argv[0],
 		msg,
 		state->argv[0]);
-	exit(1);
+	exit(marg_err_exit_status);
 }

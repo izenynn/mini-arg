@@ -6,6 +6,8 @@
 extern const char *marg_program_version;
 extern const char *marg_program_bug_address;
 
+extern int marg_err_exit_status;
+
 enum marg_option_flags {
 	NONE = 0,
 	OPTION_REQUIRED		= (1 << 0),

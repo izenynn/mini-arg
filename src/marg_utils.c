@@ -22,7 +22,7 @@ static void print_options(const struct marg *const marg, const struct marg_optio
 
 void static_marg_usage(const struct marg *const marg)
 {
-	printf("Usage: [OPTIONS...] %s\n", marg->args_doc);
+	printf("Usage: [OPTION...] %s\n", marg->args_doc);
 }
 
 void static_marg_help(const struct marg *const marg)
@@ -37,5 +37,5 @@ void static_marg_error(const struct marg *const marg, const struct marg_option *
 		fprintf(stderr, "%s: %s\n", state->argv[0], error_msg);
 	static_marg_usage(marg);
 	print_options(marg, opt);
-	exit(1);
+	exit(marg_err_exit_status);
 }
