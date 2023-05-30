@@ -11,7 +11,7 @@ void static_marg_error(const struct marg *const marg, const struct marg_option *
 
 int marg_err_exit_status = EX_USAGE;
 
-size_t marg_strlen(const char *s)
+static size_t marg_strlen(const char *s)
 {
 	const char *p;
 
@@ -19,7 +19,7 @@ size_t marg_strlen(const char *s)
 	return p - s;
 }
 
-int marg_strncmp(const char *s1, const char *s2, size_t n)
+static int marg_strncmp(const char *s1, const char *s2, size_t n)
 {
 	size_t i;
 
@@ -32,18 +32,34 @@ int marg_strncmp(const char *s1, const char *s2, size_t n)
 		return 0;
 }
 
+static char *marg_strchr(const char *s, int c)
+{
+	do {
+		if (*s == c)
+			return (char*)s;
+	} while (*s++);
+	return 0;
+}
+
 static void handle_long_option(const struct marg* marg, const char* arg, struct marg_state* state) {
 	struct marg_option *opt;
-	size_t len = marg_strlen(arg + 2) + 1;
+	const char *equal_pos = marg_strchr(arg, '=');
+	size_t len = equal_pos ? (equal_pos - arg - 2) : marg_strlen(arg + 2);
 
 	for(opt = marg->options; opt->key != 0; ++opt) {
-		if(marg_strncmp(opt->name, arg + 2, len) == 0) {
-			if((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG) && state->next < state->argc && state->argv[state->next][0] != '-') {
-				opt->arg = state->argv[++state->next];
-			} else if(opt->flags & OPTION_ARG_REQUIRED) {
-				static_marg_error(marg, opt, state, "missing value for argument");
+		if(marg_strncmp(opt->name, arg + 2, len) == 0 && (opt->name[len] == '\0' || opt->name[len] == '=')) {
+			if(equal_pos) {
+				if (opt->flags & OPTION_ARG || opt->flags & OPTION_ARG_REQUIRED)
+					opt->arg = equal_pos + 1;
+				else
+					static_marg_error(marg, opt, state, "unexpected value for argument");
 			} else {
-				opt->arg = NULL;
+				if ((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG) && state->next < state->argc && state->argv[state->next][0] != '-')
+					opt->arg = state->argv[++state->next];
+				else if (opt->flags & OPTION_ARG_REQUIRED)
+					static_marg_error(marg, opt, state, "missing value for argument");
+				else
+					opt->arg = NULL;
 			}
 			opt->is_set = true;
 			if (marg->parse_opt(opt->key, opt->arg, state))
