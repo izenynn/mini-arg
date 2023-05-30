@@ -137,8 +137,8 @@ void marg_usage(struct marg_state *state)
 	exit(1);
 }
 
-void marg_error(struct marg_state *state, const char *msg)
+void marg_error(struct marg_state *state, const char *const msg)
 {
-	fprintf(stderr, "%s: %s\nTry '%s --help'", state->argv[0], msg, state->argv[0]);
+	fprintf(stderr, "Error: %s\nTry '%s --help'", msg, state->argv[0]);
 	exit(1);
 }
