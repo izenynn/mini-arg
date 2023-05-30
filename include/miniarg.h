@@ -34,7 +34,7 @@ struct miniarg_state {
 
 struct miniarg {
 	struct miniarg_option *options;
-	void (*parse_opt)(int key, const char *arg, struct miniarg_state *state);
+	int (*parse_opt)(int key, const char *arg, struct miniarg_state *state);
 	const char *args_doc;
 	const char *doc;
 };

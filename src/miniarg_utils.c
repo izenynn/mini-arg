@@ -43,7 +43,8 @@ void print_usage(const struct miniarg *miniarg, const struct miniarg_option *opt
 
 void error_exit(const struct miniarg *miniarg, const struct miniarg_option *opt, const char* error_msg)
 {
-	fprintf(stderr, "%s\n", error_msg);
+	if (error_msg != NULL)
+		fprintf(stderr, "%s\n", error_msg);
 	print_usage(miniarg, opt);
 	exit(1);
 }

@@ -11,8 +11,10 @@ void print_usage(const struct miniarg *miniarg, const struct miniarg_option *opt
 void error_exit(const struct miniarg *miniarg, const struct miniarg_option *opt, const char* error_msg);
 
 void handle_long_option(const struct miniarg* miniarg, const char* arg, struct miniarg_state* state) {
+	struct miniarg_option *opt;
 	size_t len = ma_strlen(arg + 2) + 1;
-	for(struct miniarg_option *opt = miniarg->options; opt != NULL; ++opt) {
+
+	for(opt = miniarg->options; opt != NULL; ++opt) {
 		if(ma_strncmp(opt->name, arg + 2, len) == 0) {
 			if((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG) && state->next < state->argc && state->argv[state->next][0] != '-') {
 				opt->arg = state->argv[++state->next];
@@ -22,15 +24,20 @@ void handle_long_option(const struct miniarg* miniarg, const char* arg, struct m
 				opt->arg = NULL;
 			}
 			opt->is_set = true;
-			miniarg->parse_opt(opt->key, opt->arg, state);
+			if (miniarg->parse_opt(opt->key, opt->arg, state))
+				error_exit(miniarg, opt, "Error: Parser failed for option");
 			return;
 		}
 	}
+	if (opt == NULL)
+		error_exit(miniarg, NULL, "Error: Unknown long option");
 }
 
 void handle_short_option(const struct miniarg* miniarg, const char* arg, struct miniarg_state* state) {
+	struct miniarg_option *opt;
+
 	for (const char *p = arg + 1; *p != '\0'; ++p) {
-		for(struct miniarg_option *opt = miniarg->options; opt != NULL; ++opt) {
+		for(opt = miniarg->options; opt != NULL; ++opt) {
 			if(opt->key == *p) {
 				if((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG) && *(p + 1) == '\0' && state->next < state->argc && state->argv[state->next][0] != '-') {
 					opt->arg = state->argv[++state->next];
@@ -40,10 +47,13 @@ void handle_short_option(const struct miniarg* miniarg, const char* arg, struct 
 					opt->arg = NULL;
 				}
 				opt->is_set = true;
-				miniarg->parse_opt(opt->key, opt->arg, state);
+				if (miniarg->parse_opt(opt->key, opt->arg, state))
+					error_exit(miniarg, opt, "Error: Parser failed for option");
 				break;
 			}
 		}
+		if (opt == NULL)
+			error_exit(miniarg, NULL, "Error: Unknown short option");
 	}
 }
 
@@ -77,14 +87,16 @@ void miniarg_parse(struct miniarg* miniarg, int argc, char** argv, void* input)
 				handle_short_option(miniarg, argv[state.next], &state);
 			}
 		} else {
-			miniarg->parse_opt(MINIARG_ARG, argv[state.next], &state);
+			if (miniarg->parse_opt(MINIARG_ARG, argv[state.next], &state))
+				error_exit(miniarg, NULL, "Error: Parser failed for argument");
 			state.arg_num++;
 		}
 	}
 	
 	// Handle normal arguments after "--"
 	for(; state.next < argc; ++state.next) {
-		miniarg->parse_opt(MINIARG_ARG, argv[state.next], &state);
+		if (miniarg->parse_opt(MINIARG_ARG, argv[state.next], &state))
+			error_exit(miniarg, NULL, "Error: Parser failed for argument");
 		state.arg_num++;
 	}
 
@@ -97,4 +109,5 @@ void miniarg_parse(struct miniarg* miniarg, int argc, char** argv, void* input)
 
 	// Signal the end of parsing
 	miniarg->parse_opt(MINIARG_END, NULL, &state);
+		error_exit(miniarg, NULL, "Error: Something went wrong parsing arguments");
 }
