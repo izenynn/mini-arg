@@ -45,6 +45,6 @@ struct marg {
 void marg_parse(struct marg *marg, int argc, char **argv, void *input);
 
 void marg_usage(struct marg_state *state);
-void marg_error(struct marg_state *state, const char *const msg);
+void marg_error(struct marg_state *state, const char *fmt, ...);
 
 #endif // MINIARG_MINIARG_H_

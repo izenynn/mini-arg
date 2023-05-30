@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sysexits.h>
+#include <stdarg.h>
 #include "miniarg.h"
 
 void static_marg_usage(const struct marg *const marg);
@@ -51,7 +52,7 @@ static void handle_long_option(const struct marg* marg, const char* arg, struct 
 		}
 	}
 	if (opt->key == 0)
-		marg_error(state, "unknown long option");
+		marg_error(state, "unknown long option '%s'", arg);
 }
 
 static void handle_short_option(const struct marg* marg, const char* arg, struct marg_state* state) {
@@ -82,7 +83,7 @@ static void handle_short_option(const struct marg* marg, const char* arg, struct
 			}
 		}
 		if (opt->key == 0)
-			marg_error(state, "unknown short option");
+			marg_error(state, "unknown short option '-%c'", *p);
 	}
 }
 
@@ -146,11 +147,15 @@ void marg_usage(struct marg_state *state)
 	exit(marg_err_exit_status);
 }
 
-void marg_error(struct marg_state *state, const char *const msg)
+void marg_error(struct marg_state *state, const char *fmt, ...)
 {
-	fprintf(stderr, "%s: %s\nTry '%s --help' for more information.\n",
-		state->argv[0],
-		msg,
+	va_list args;
+
+	va_start(args, fmt);
+	fprintf(stderr, "%s: ", state->argv[0]);
+	vfprintf(stderr, fmt, args);
+	fprintf(stderr, "\nTry '%s --help' for more information.\n",
 		state->argv[0]);
+	va_end(args);
 	exit(marg_err_exit_status);
 }
