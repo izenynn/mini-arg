@@ -32,7 +32,7 @@ void static_marg_help(const struct marg *const marg)
 void static_marg_error(const struct marg *const marg, const struct marg_option *opt, const char* error_msg)
 {
 	if (error_msg != NULL)
-		fprintf(stderr, "%s\n", error_msg);
+		fprintf(stderr, "Error: %s\n", error_msg);
 	static_marg_usage(marg);
 	print_options(marg, opt);
 	exit(1);
