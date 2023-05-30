@@ -40,18 +40,18 @@ static void handle_long_option(const struct marg* marg, const char* arg, struct 
 			if((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG) && state->next < state->argc && state->argv[state->next][0] != '-') {
 				opt->arg = state->argv[++state->next];
 			} else if(opt->flags & OPTION_ARG_REQUIRED) {
-				static_marg_error(marg, opt, state, "Missing value for argument");
+				static_marg_error(marg, opt, state, "missing value for argument");
 			} else {
 				opt->arg = NULL;
 			}
 			opt->is_set = true;
 			if (marg->parse_opt(opt->key, opt->arg, state))
-				static_marg_error(marg, opt, state, "Parser failed for option");
+				static_marg_error(marg, opt, state, "parser failed for option");
 			return;
 		}
 	}
 	if (opt->key == 0)
-		marg_error(state, "Unknown long option");
+		marg_error(state, "unknown long option");
 }
 
 static void handle_short_option(const struct marg* marg, const char* arg, struct marg_state* state) {
@@ -60,21 +60,29 @@ static void handle_short_option(const struct marg* marg, const char* arg, struct
 	for (const char *p = arg + 1; *p != '\0'; ++p) {
 		for(opt = marg->options; opt->key != 0; ++opt) {
 			if(opt->key == *p) {
-				if((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG) && *(p + 1) == '\0' && state->next < state->argc && state->argv[state->next][0] != '-') {
-					opt->arg = state->argv[++state->next];
-				} else if(opt->flags & OPTION_ARG_REQUIRED) {
-					static_marg_error(marg, opt, state, "Unexpected argument or missing value");
+				if((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG)) {
+					if (*(p + 1) != '\0') {
+						opt->arg = p + 1;
+						while(*p != '\0') ++p;
+					} else if(state->next < state->argc
+							&& state->argv[state->next][0] != '-') {
+						opt->arg = state->argv[++state->next];
+					} else if(opt->flags & OPTION_ARG_REQUIRED) {
+						static_marg_error(marg, opt, state, "unexpected argument or missing value");
+					} else {
+						opt->arg = NULL;
+					}
 				} else {
 					opt->arg = NULL;
 				}
 				opt->is_set = true;
 				if (marg->parse_opt(opt->key, opt->arg, state))
-					static_marg_error(marg, opt, state, "Parser failed for option");
+					static_marg_error(marg, opt, state, "parser failed for option");
 				break;
 			}
 		}
 		if (opt->key == 0)
-			marg_error(state, "Unknown short option");
+			marg_error(state, "unknown short option");
 	}
 }
 
@@ -109,7 +117,7 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 				handle_short_option(marg, argv[state.next], &state);
 		} else {
 			if (marg->parse_opt(MARG_KEY_ARG, argv[state.next], &state))
-				marg_error(&state, "Parser failed for argument");
+				marg_error(&state, "parser failed for argument");
 			state.arg_num++;
 		}
 	}
@@ -117,19 +125,19 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 	// Handle normal arguments after "--"
 	for(; state.next < argc; ++state.next) {
 		if (marg->parse_opt(MARG_KEY_ARG, argv[state.next], &state))
-			marg_error(&state, "Parser failed for argument");
+			marg_error(&state, "parser failed for argument");
 		state.arg_num++;
 	}
 
 	// Check if required options are set
 	for(struct marg_option *opt = marg->options; opt->key != 0; ++opt) {
 		if((opt->flags & OPTION_REQUIRED) && !opt->is_set)
-			marg_error(&state, "Missing required argument");
+			marg_error(&state, "missing required argument");
 	}
 
 	// Signal the end of parsing
 	if (marg->parse_opt(MARG_KEY_END, NULL, &state))
-		marg_error(&state, "Something went wrong parsing arguments");
+		marg_error(&state, "something went wrong parsing arguments");
 }
 
 void marg_usage(struct marg_state *state)
