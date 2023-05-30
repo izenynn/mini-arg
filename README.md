@@ -19,6 +19,7 @@ A simple library for argument parsing in C, inspired by `argp`.
 - Count of normal arguments.
 - Notify when arguments end so you can perform all necessary action.
 - Supports `--`.
+- Customize failure exit code.
 
 ## Usage
 
