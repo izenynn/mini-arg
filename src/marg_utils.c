@@ -4,7 +4,10 @@
 
 static inline void print_opt(const struct marg_option *opt)
 {
-	printf("  -%c, --%-20s %s\n", opt->key, opt->name, opt->description);
+	if(opt->flags & OPTION_ARG || opt->flags & OPTION_ARG_REQUIRED)
+		printf("  -%c, --%-20s=VALUE %s\n", opt->key, opt->name, opt->description);
+	else
+		printf("  -%c, --%-20s %s\n", opt->key, opt->name, opt->description);
 }
 
 static void print_options(const struct marg *const marg, const struct marg_option *opt)
