@@ -47,7 +47,7 @@ static void handle_long_option(const struct marg* marg, const char* arg, struct 
 			return;
 		}
 	}
-	if (opt == NULL)
+	if (opt->key == 0)
 		static_marg_error(marg, NULL, "Error: Unknown long option");
 }
 
@@ -70,7 +70,7 @@ static void handle_short_option(const struct marg* marg, const char* arg, struct
 				break;
 			}
 		}
-		if (opt == NULL)
+		if (opt->key == 0)
 			static_marg_error(marg, NULL, "Error: Unknown short option");
 	}
 }
