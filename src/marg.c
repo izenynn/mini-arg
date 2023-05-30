@@ -5,7 +5,7 @@
 
 void static_marg_usage(const struct marg *const marg);
 void static_marg_help(const struct marg *const marg);
-void static_marg_error(const struct marg *const marg, const struct marg_option *opt, const char* error_msg);
+void static_marg_error(const struct marg *const marg, const struct marg_option *opt, const struct marg_state *const state, const char* error_msg);
 
 size_t marg_strlen(const char *s)
 {
@@ -37,13 +37,13 @@ static void handle_long_option(const struct marg* marg, const char* arg, struct 
 			if((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG) && state->next < state->argc && state->argv[state->next][0] != '-') {
 				opt->arg = state->argv[++state->next];
 			} else if(opt->flags & OPTION_ARG_REQUIRED) {
-				static_marg_error(marg, opt, "Missing value for argument");
+				static_marg_error(marg, opt, state, "Missing value for argument");
 			} else {
 				opt->arg = NULL;
 			}
 			opt->is_set = true;
 			if (marg->parse_opt(opt->key, opt->arg, state))
-				static_marg_error(marg, opt, "Parser failed for option");
+				static_marg_error(marg, opt, state, "Parser failed for option");
 			return;
 		}
 	}
@@ -60,13 +60,13 @@ static void handle_short_option(const struct marg* marg, const char* arg, struct
 				if((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG) && *(p + 1) == '\0' && state->next < state->argc && state->argv[state->next][0] != '-') {
 					opt->arg = state->argv[++state->next];
 				} else if(opt->flags & OPTION_ARG_REQUIRED) {
-					static_marg_error(marg, opt, "Unexpected argument or missing value");
+					static_marg_error(marg, opt, state, "Unexpected argument or missing value");
 				} else {
 					opt->arg = NULL;
 				}
 				opt->is_set = true;
 				if (marg->parse_opt(opt->key, opt->arg, state))
-					static_marg_error(marg, opt, "Parser failed for option");
+					static_marg_error(marg, opt, state, "Parser failed for option");
 				break;
 			}
 		}
@@ -137,6 +137,9 @@ void marg_usage(struct marg_state *state)
 
 void marg_error(struct marg_state *state, const char *const msg)
 {
-	fprintf(stderr, "Error: %s\nTry '%s --help'\n", msg, state->argv[0]);
+	fprintf(stderr, "%s: %s\nTry '%s --help' for more information.\n",
+		state->argv[0],
+		msg,
+		state->argv[0]);
 	exit(1);
 }
