@@ -100,11 +100,10 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 			printf("%s\n", marg_program_version);
 			exit(0);
 		} else if(argv[state.next][0] == '-') {
-			if(argv[state.next][1] == '-') {
+			if(argv[state.next][1] == '-')
 				handle_long_option(marg, argv[state.next], &state);
-			} else {
+			else
 				handle_short_option(marg, argv[state.next], &state);
-			}
 		} else {
 			if (marg->parse_opt(MARG_KEY_ARG, argv[state.next], &state))
 				marg_error(&state, "Parser failed for argument");
@@ -121,13 +120,12 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 
 	// Check if required options are set
 	for(struct marg_option *opt = marg->options; opt->key != 0; ++opt) {
-		if((opt->flags & OPTION_REQUIRED) && !opt->is_set) {
+		if((opt->flags & OPTION_REQUIRED) && !opt->is_set)
 			marg_error(&state, "Missing required argument");
-		}
 	}
 
 	// Signal the end of parsing
-	marg->parse_opt(MARG_KEY_END, NULL, &state);
+	if (marg->parse_opt(MARG_KEY_END, NULL, &state))
 		marg_error(&state, "Something went wrong parsing arguments");
 }
 
