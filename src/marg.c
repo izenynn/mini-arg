@@ -52,6 +52,7 @@ static void handle_long_option(const struct marg* marg, const char* arg, struct 
 				if (opt->flags & OPTION_ARG || opt->flags & OPTION_ARG_REQUIRED)
 					opt->arg = equal_pos + 1;
 				else
+					// THIS SHIT
 					static_marg_error(marg, opt, state, "unexpected value for argument");
 			} else {
 				if ((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG) && state->next < state->argc && state->argv[state->next][0] != '-')
@@ -80,11 +81,11 @@ static void handle_short_option(const struct marg* marg, const char* arg, struct
 				if((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG)) {
 					if (*(p + 1) != '\0') {
 						opt->arg = p + 1;
-						while(*p != '\0') ++p;
-					} else if(state->next < state->argc
+						while(*(p + 1) != '\0') ++p;
+					} else if (state->next < state->argc
 							&& state->argv[state->next][0] != '-') {
 						opt->arg = state->argv[++state->next];
-					} else if(opt->flags & OPTION_ARG_REQUIRED) {
+					} else if (opt->flags & OPTION_ARG_REQUIRED) {
 						static_marg_error(marg, opt, state, "unexpected argument or missing value");
 					} else {
 						opt->arg = NULL;
@@ -115,20 +116,20 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 	};
 
 	// Handle options
-	for(; state.next < argc; ++state.next) {
+	for (; state.next < argc; ++state.next) {
 		if(marg_strncmp(argv[state.next], "--", 3) == 0) {
 			state.next++;
 			break;
 		}
 		
-		if(marg_strncmp(argv[state.next], "-h", 3) == 0 || marg_strncmp(argv[state.next], "--help", 7) == 0) {
+		if (marg_strncmp(argv[state.next], "-h", 3) == 0 || marg_strncmp(argv[state.next], "--help", 7) == 0) {
 			static_marg_help(marg);
 			exit(EX_OK);
-		} else if(marg_strncmp(argv[state.next], "-V", 3) == 0 || marg_strncmp(argv[state.next], "--version", 10) == 0) {
+		} else if (marg_strncmp(argv[state.next], "-V", 3) == 0 || marg_strncmp(argv[state.next], "--version", 10) == 0) {
 			printf("%s\n", marg_program_version);
 			exit(EX_OK);
-		} else if(argv[state.next][0] == '-') {
-			if(argv[state.next][1] == '-')
+		} else if (argv[state.next][0] == '-') {
+			if (argv[state.next][1] == '-')
 				handle_long_option(marg, argv[state.next], &state);
 			else
 				handle_short_option(marg, argv[state.next], &state);
@@ -140,14 +141,14 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 	}
 	
 	// Handle normal arguments after "--"
-	for(; state.next < argc; ++state.next) {
+	for (; state.next < argc; ++state.next) {
 		if (marg->parse_opt(MARG_KEY_ARG, argv[state.next], &state))
 			marg_error(&state, "parser failed for argument");
 		state.arg_num++;
 	}
 
 	// Check if required options are set
-	for(struct marg_option *opt = marg->options; opt->key != 0; ++opt) {
+	for (struct marg_option *opt = marg->options; opt->key != 0; ++opt) {
 		if((opt->flags & OPTION_REQUIRED) && !opt->is_set)
 			marg_error(&state, "missing required argument");
 	}
