@@ -148,5 +148,6 @@ void marg_error(struct marg_state *state, const char *fmt, ...)
 	fprintf(stderr, "\nTry '%s --help' for more information.\n",
 		state->argv[0]);
 	va_end(args);
+	fflush(stdout);
 	exit(marg_err_exit_status);
 }

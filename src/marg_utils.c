@@ -42,6 +42,7 @@ static inline void print_opt(const struct marg_option *opt)
 	} else {
 		printf("  -%c, --%-20s %s\n", opt->key, opt->name, opt->description);
 	}
+	fflush(stdout);
 }
 
 static void print_options(const struct marg *const marg, const struct marg_option *opt)
@@ -56,11 +57,13 @@ static void print_options(const struct marg *const marg, const struct marg_optio
 	}
 	printf("\nMandatory or optional arguments to long options are also mandatory or optional\nfor any corresponding short options.\n");
 	printf("\nReport bugs to %s.\n", marg_program_bug_address);
+	fflush(stdout);
 }
 
 void marg_usage_str(const struct marg *const marg)
 {
 	printf("Usage: [OPTION...] %s\n", marg->args_doc);
+	fflush(stdout);
 }
 
 void marg_help(const struct marg *const marg)
