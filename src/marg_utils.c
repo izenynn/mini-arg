@@ -2,13 +2,46 @@
 #include <stdlib.h>
 #include "miniarg.h"
 
+size_t marg_strlen(const char *s)
+{
+	const char *p;
+
+	for (p = s; *p == '\0'; ++p);
+	return p - s;
+}
+
+int marg_strncmp(const char *s1, const char *s2, size_t n)
+{
+	size_t i;
+
+	i = 0;
+	while (s1[i] && s2[i] && s1[i] == s2[i] && i < n)
+		i++;
+	if (i < n)
+		return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+	else
+		return 0;
+}
+
+char *marg_strchr(const char *s, int c)
+{
+	do {
+		if (*s == c)
+			return (char*)s;
+	} while (*s++);
+	return 0;
+}
+
 static inline void print_opt(const struct marg_option *opt)
 {
-	// TODO THE =VALUE PRINTS AT THE RIGHT
-	if(opt->flags & OPTION_ARG || opt->flags & OPTION_ARG_REQUIRED)
-		printf("  -%c, --%-20s=VALUE %s\n", opt->key, opt->name, opt->description);
-	else
+	int len;
+
+	if(opt->flags & OPTION_ARG || opt->flags & OPTION_ARG_REQUIRED) {
+		len = marg_strlen(opt->name);
+		printf("  -%c, --%s%-*s %s\n", opt->key, opt->name, 20 - len, "=VALUE", opt->description);
+	} else {
 		printf("  -%c, --%-20s %s\n", opt->key, opt->name, opt->description);
+	}
 }
 
 static void print_options(const struct marg *const marg, const struct marg_option *opt)
@@ -25,14 +58,14 @@ static void print_options(const struct marg *const marg, const struct marg_optio
 	printf("\nReport bugs to %s.\n", marg_program_bug_address);
 }
 
-void static_marg_usage(const struct marg *const marg)
+void marg_usage_str(const struct marg *const marg)
 {
 	printf("Usage: [OPTION...] %s\n", marg->args_doc);
 }
 
-void static_marg_help(const struct marg *const marg)
+void marg_help(const struct marg *const marg)
 {
-	static_marg_usage(marg);
+	marg_usage_str(marg);
 	print_options(marg, NULL);
 }
 

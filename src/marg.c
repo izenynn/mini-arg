@@ -5,40 +5,14 @@
 #include <stdarg.h>
 #include "miniarg.h"
 
-void static_marg_usage(const struct marg *const marg);
-void static_marg_help(const struct marg *const marg);
+void marg_usage_str(const struct marg *const marg);
+void marg_help(const struct marg *const marg);
+
+size_t marg_strlen(const char *s);
+int marg_strncmp(const char *s1, const char *s2, size_t n);
+char *marg_strchr(const char *s, int c);
 
 int marg_err_exit_status = EX_USAGE;
-
-static size_t marg_strlen(const char *s)
-{
-	const char *p;
-
-	for (p = s; *p == '\0'; ++p);
-	return p - s;
-}
-
-static int marg_strncmp(const char *s1, const char *s2, size_t n)
-{
-	size_t i;
-
-	i = 0;
-	while (s1[i] && s2[i] && s1[i] == s2[i] && i < n)
-		i++;
-	if (i < n)
-		return ((unsigned char)s1[i] - (unsigned char)s2[i]);
-	else
-		return 0;
-}
-
-static char *marg_strchr(const char *s, int c)
-{
-	do {
-		if (*s == c)
-			return (char*)s;
-	} while (*s++);
-	return 0;
-}
 
 static void handle_long_option(const struct marg* marg, const char* arg, struct marg_state* state) {
 	struct marg_option *opt;
@@ -123,7 +97,7 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 		}
 		
 		if (marg_strncmp(argv[state.next], "-h", 3) == 0 || marg_strncmp(argv[state.next], "--help", 7) == 0) {
-			static_marg_help(marg);
+			marg_help(marg);
 			exit(EX_OK);
 		} else if (marg_strncmp(argv[state.next], "-V", 3) == 0 || marg_strncmp(argv[state.next], "--version", 10) == 0) {
 			printf("%s\n", marg_program_version);
@@ -160,7 +134,7 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 
 void marg_usage(struct marg_state *state)
 {
-	static_marg_usage(state->root_marg);
+	marg_usage_str(state->root_marg);
 	exit(marg_err_exit_status);
 }
 
