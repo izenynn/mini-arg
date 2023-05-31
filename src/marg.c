@@ -7,7 +7,6 @@
 
 void static_marg_usage(const struct marg *const marg);
 void static_marg_help(const struct marg *const marg);
-void static_marg_error(const struct marg *const marg, const struct marg_option *opt, const struct marg_state *const state, const char* error_msg);
 
 int marg_err_exit_status = EX_USAGE;
 
@@ -52,21 +51,20 @@ static void handle_long_option(const struct marg* marg, const char* arg, struct 
 				if (opt->flags & OPTION_ARG || opt->flags & OPTION_ARG_REQUIRED)
 					opt->arg = equal_pos + 1;
 				else
-					// TODO THIS SHIT PRINTS SHIT
-					static_marg_error(marg, opt, state, "unexpected value for argument");
+					marg_error(state, "option '%s' doesn't allow an argument", arg);
 			} else {
 				if ((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG)
 						&& (state->next + 1) < state->argc
 						&& state->argv[state->next + 1][0] != '-')
 					opt->arg = state->argv[++state->next];
 				else if (opt->flags & OPTION_ARG_REQUIRED)
-					static_marg_error(marg, opt, state, "missing value for argument");
+					marg_error(state, "option requires an argument '%s'", arg);
 				else
 					opt->arg = NULL;
 			}
 			opt->is_set = true;
 			if (marg->parse_opt(opt->key, opt->arg, state))
-				static_marg_error(marg, opt, state, "parser failed for option");
+				marg_error(state, "parser failed for option '%s'", arg);
 			return;
 		}
 	}
@@ -88,7 +86,7 @@ static void handle_short_option(const struct marg* marg, const char* arg, struct
 							&& state->argv[state->next + 1][0] != '-') {
 						opt->arg = state->argv[++state->next];
 					} else if (opt->flags & OPTION_ARG_REQUIRED) {
-						static_marg_error(marg, opt, state, "unexpected argument or missing value");
+						marg_error(state, "option requires an argument '%s'", arg);
 					} else {
 						opt->arg = NULL;
 					}
@@ -97,7 +95,7 @@ static void handle_short_option(const struct marg* marg, const char* arg, struct
 				}
 				opt->is_set = true;
 				if (marg->parse_opt(opt->key, opt->arg, state))
-					static_marg_error(marg, opt, state, "parser failed for option");
+					marg_error(state, "parser failed for option '%s'", arg);
 				break;
 			}
 		}

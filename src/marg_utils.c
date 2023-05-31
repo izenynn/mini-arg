@@ -36,6 +36,9 @@ void static_marg_help(const struct marg *const marg)
 	print_options(marg, NULL);
 }
 
+/*
+ * Unused function
+ *
 void static_marg_error(const struct marg *const marg, const struct marg_option *opt, const struct marg_state *const state, const char* error_msg)
 {
 	if (error_msg != NULL)
@@ -44,3 +47,4 @@ void static_marg_error(const struct marg *const marg, const struct marg_option *
 	print_options(marg, opt);
 	exit(marg_err_exit_status);
 }
+*/
