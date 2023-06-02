@@ -17,7 +17,7 @@ MV = mv
 MKDIR = mkdir -p
 RM = rm -rf
 
-MAX_OPTIONS ?= 100
+MAX_OPTIONS ?= 50
 
 # **************************************************************************** #
 #                                   COMPILER                                   #

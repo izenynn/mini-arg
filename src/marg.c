@@ -97,7 +97,7 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 		num_options++;
 	if (num_options > MAX_OPTIONS) {
 		fprintf(stderr, "Fatal: Too many options. Increase MAX_OPTIONS constant in compilation with `-D`.\n");
-		fprintf(stderr, "MAX_OPTIONS: %d\n%s options: %d\n", MAX_OPTIONS, argv[0], num_options);
+		fprintf(stderr, "MAX_OPTIONS: %d vs %s options: %d\n", MAX_OPTIONS, argv[0], num_options);
 		exit(EX_CONFIG);
 	}
 

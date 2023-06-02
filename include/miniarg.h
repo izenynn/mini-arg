@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #ifndef MAX_OPTIONS
-#define MAX_OPTIONS 100
+#define MAX_OPTIONS 50
 #endif // MAX_OPTIONS
 
 extern const char *marg_program_version;
