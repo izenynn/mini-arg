@@ -17,6 +17,8 @@ MV = mv
 MKDIR = mkdir -p
 RM = rm -rf
 
+MAX_OPTIONS ?= 100
+
 # **************************************************************************** #
 #                                   COMPILER                                   #
 # **************************************************************************** #
@@ -24,6 +26,7 @@ RM = rm -rf
 CC = gcc
 CPPFLAGS = -MMD
 CFLAGS = -Wall -Wextra -Werror -Wpedantic -Wshadow
+CFLAGS += -D MAX_OPTIONS=$(MAX_OPTIONS)
 
 AR = ar
 ARFLAGS = rcs

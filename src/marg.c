@@ -14,6 +14,8 @@ char *marg_strchr(const char *s, int c);
 
 int marg_err_exit_status = EX_USAGE;
 
+static bool is_set[MAX_OPTIONS] = {0};
+
 static void handle_long_option(const struct marg* marg, const char* arg, struct marg_state* state) {
 	struct marg_option *opt;
 	const char *equal_pos = marg_strchr(arg, '=');
@@ -36,7 +38,7 @@ static void handle_long_option(const struct marg* marg, const char* arg, struct 
 				else
 					opt->arg = NULL;
 			}
-			opt->is_set = true;
+			is_set[opt - marg->options] = true;
 			if (marg->parse_opt(opt->key, opt->arg, state))
 				marg_error(state, "parser failed for option '%s'", arg);
 			return;
@@ -67,7 +69,7 @@ static void handle_short_option(const struct marg* marg, const char* arg, struct
 				} else {
 					opt->arg = NULL;
 				}
-				opt->is_set = true;
+				is_set[opt - marg->options] = true;
 				if (marg->parse_opt(opt->key, opt->arg, state))
 					marg_error(state, "parser failed for option '%s'", arg);
 				break;
@@ -88,6 +90,16 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 		.arg_num = 0,
 		.input = input
 	};
+
+	// Check if the number of options is less than 100
+	int num_options = 0;
+	for (struct marg_option *opt = marg->options; opt->key != 0; ++opt)
+		num_options++;
+	if (num_options > MAX_OPTIONS) {
+		fprintf(stderr, "Fatal: Too many options. Increase MAX_OPTIONS constant in compilation with `-D`.\n");
+		fprintf(stderr, "MAX_OPTIONS: %d\n%s options: %d\n", MAX_OPTIONS, argv[0], num_options);
+		exit(EX_CONFIG);
+	}
 
 	// Handle options
 	for (; state.next < argc; ++state.next) {
@@ -123,7 +135,7 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 
 	// Check if required options are set
 	for (struct marg_option *opt = marg->options; opt->key != 0; ++opt) {
-		if((opt->flags & OPTION_REQUIRED) && !opt->is_set)
+		if((opt->flags & OPTION_REQUIRED) && !is_set[opt - marg->options])  // Updated code
 			marg_error(&state, "missing required argument");
 	}
 

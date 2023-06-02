@@ -3,6 +3,10 @@
 
 #include <stdbool.h>
 
+#ifndef MAX_OPTIONS
+#define MAX_OPTIONS 100
+#endif // MAX_OPTIONS
+
 extern const char *marg_program_version;
 extern const char *marg_program_bug_address;
 
@@ -22,7 +26,6 @@ struct marg_option {
 	const char *name;
 	const char *arg;
 	int flags;
-	bool is_set;
 	const char* description;
 };
 
