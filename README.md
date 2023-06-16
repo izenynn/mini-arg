@@ -24,6 +24,7 @@ A simple library for argument parsing in C, inspired by `argp`.
 - Supports `--`.
 - Access to glabal variable `marg_err_exit_status` to customize the error exit code.
 - Access to global varibale `marg_program_name` to help you with your own log functions.
+- Group your options, `-h/--help` message will also show the group description.
 
 ## Usage
 
