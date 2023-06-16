@@ -6,9 +6,10 @@ A simple library for argument parsing in C, inspired by `argp`.
 
 ## Features
 
-- Short and long argument.
-- Concatenated short arguments (`-abcDEF`).
-- Required argument (throws an error if a required argument is not provided).
+- Long options.
+- Short key for long options.
+- Concatenated short options (`-abcDEF`).
+- Required argument (throws an error if a required argument is not provided for an option that needs it).
 - Required argument value (syntax: `-a VALUE` / `-aVALUE` / `--arg VALUE` / `--arg=VALUE`).
 - Optional argument value (value can be present or not).
 - Default value, useful for optional argument value (`miniarg_option->arg`).

@@ -32,15 +32,25 @@ char *marg_strchr(const char *s, int c)
 	return 0;
 }
 
+static int ping_isprint(int c)
+{
+	return (c >= ' ' && c <= '~');
+}
+
 static inline void print_opt(const struct marg_option *opt)
 {
 	int len;
 
+	if (ping_isprint(opt->key))
+		printf("  -%c, ", opt->key);
+	else
+		printf("      ");
+
 	if(opt->flags & OPTION_ARG || opt->flags & OPTION_ARG_REQUIRED) {
 		len = marg_strlen(opt->name);
-		printf("  -%c, --%s%-*s %s\n", opt->key, opt->name, 20 - len, "=VALUE", opt->description);
+		printf("--%s%-*s %s\n", opt->name, 20 - len, "=VALUE", opt->description);
 	} else {
-		printf("  -%c, --%-20s %s\n", opt->key, opt->name, opt->description);
+		printf("--%-20s %s\n", opt->name, opt->description);
 	}
 	fflush(stdout);
 }
@@ -55,6 +65,7 @@ static void print_options(const struct marg *const marg, const struct marg_optio
 	} else {
 		print_opt(opt);
 	}
+	printf("\n");
 
 	printf("  -%c, --%-20s %s\n", 'h', "help", "give this help list");
 	printf("      --%-20s %s\n", "usage", "give a short usage message");
