@@ -55,6 +55,11 @@ static void print_options(const struct marg *const marg, const struct marg_optio
 	} else {
 		print_opt(opt);
 	}
+
+	printf("  -%c, --%-20s %s\n", 'h', "--help", "give this help list");
+	printf("       --%-20s %s\n", "--usage", "give a short usage message");
+	printf("  -%c, --%-20s %s\n", 'V', "--version", "print program version");
+
 	printf("\nMandatory or optional arguments to long options are also mandatory or optional\nfor any corresponding short options.\n");
 	printf("\nReport bugs to %s.\n", marg_program_bug_address);
 	fflush(stdout);
