@@ -14,6 +14,7 @@ A simple library for argument parsing in C, inspired by `argp`.
 - Default value, useful for optional argument value (`miniarg_option->arg`).
 - If short option requires argument, rest of the string will be treated as one.
 - Automatic `-h` and `--help`.
+- Automatic `--usage` (for now it doesn't print all options, just a simple usage message).
 - Automatic `-V` and `--version`.
 - Exposed function to print usage.
 - Normal arguments.
