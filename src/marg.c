@@ -12,6 +12,7 @@ size_t marg_strlen(const char *s);
 int marg_strncmp(const char *s1, const char *s2, size_t n);
 char *marg_strchr(const char *s, int c);
 
+const char *marg_program_name;
 int marg_err_exit_status = EX_USAGE;
 
 static bool is_set[MAX_OPTIONS] = {0};
@@ -90,6 +91,8 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 		.arg_num = 0,
 		.input = input
 	};
+
+	marg_program_name = argv[0];
 
 	// Check if the number of options is less than 100
 	int num_options = 0;

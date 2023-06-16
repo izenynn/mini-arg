@@ -7,6 +7,7 @@
 #define MAX_OPTIONS 50
 #endif // MAX_OPTIONS
 
+extern const char *marg_program_name;
 extern const char *marg_program_version;
 extern const char *marg_program_bug_address;
 

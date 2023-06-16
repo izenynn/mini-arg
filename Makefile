@@ -72,16 +72,16 @@ $(NAME): $(OBJ)
 
 PHONY += sanitize
 ifeq ($(UNAME_S),Linux)
-sanitize: CFLAGS += -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
+sanitize:: CFLAGS += -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
 endif
 ifeq ($(UNAME_S),Darwin)
-sanitize: CFLAGS += -g3 -fsanitize=address
+sanitize:: CFLAGS += -g3 -fsanitize=address
 endif
-sanitize: $(NAME)
+sanitize:: $(NAME)
 
 PHONY += thread
-thread: CFLAGS += -g3 -fsanitize=thread
-thread: $(NAME)
+thread:: CFLAGS += -g3 -fsanitize=thread
+thread:: $(NAME)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
@@ -98,7 +98,8 @@ fclean: clean
 	$(RM) $(NAME)
 
 PHONY += re
-re: fclean all
+re:: fclean
+re:: all
 
 -include $(DEP)
 
