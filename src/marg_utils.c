@@ -63,6 +63,9 @@ static void print_options(const struct marg *const marg, const struct marg_optio
 			printf(" %s\n", opt->description);
 		else
 			print_opt(opt);
+
+		if ((opt + 1)->key == MARG_GRP)
+			printf("\n");
 	}
 	printf("\n");
 
