@@ -58,12 +58,11 @@ static inline void print_opt(const struct marg_option *opt)
 static void print_options(const struct marg *const marg, const struct marg_option *opt)
 {
 	printf("%s\n\n", marg->doc);
-	if (opt == NULL) {
-		for (opt = marg->options; opt->key != 0; ++opt) {
+	for (opt = marg->options; opt->key != 0; ++opt) {
+		if (opt->key == MARG_GRP)
+			printf(" %s\n", opt->description);
+		else
 			print_opt(opt);
-		}
-	} else {
-		print_opt(opt);
 	}
 	printf("\n");
 

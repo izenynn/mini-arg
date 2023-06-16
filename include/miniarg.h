@@ -15,6 +15,10 @@ extern const char *marg_program_bug_address;
 extern const char *marg_program_name;
 extern int marg_err_exit_status;
 
+enum {
+	MARG_GRP = 1
+};
+
 enum marg_option_flags {
 	NONE = 0,
 	OPTION_REQUIRED		= (1 << 0),
