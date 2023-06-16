@@ -115,7 +115,7 @@ void marg_parse(struct marg* marg, int argc, char** argv, void* input)
 			marg_help(marg);
 			exit(EX_OK);
 		} else if (marg_strncmp(argv[state.next], "--usage", 8) == 0) {
-			marg_usage_str(state->root_marg);
+			marg_usage_str(state.root_marg);
 			exit(EX_OK);
 		} else if (marg_strncmp(argv[state.next], "-V", 3) == 0 || marg_strncmp(argv[state.next], "--version", 10) == 0) {
 			printf("%s\n", marg_program_version);
