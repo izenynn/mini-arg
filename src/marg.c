@@ -22,9 +22,11 @@ static void handle_long_option(const struct marg* marg, const char* arg, struct 
 	const char *equal_pos = marg_strchr(arg, '=');
 	size_t len = equal_pos ? (size_t)(equal_pos - arg - 2) : marg_strlen(arg + 2);
 
-	for(opt = marg->options; opt->key != 0; ++opt) {
-		if(marg_strncmp(opt->name, arg + 2, len) == 0 && (opt->name[len] == '\0' || opt->name[len] == '=')) {
-			if(equal_pos) {
+	for (opt = marg->options; opt->key != 0; ++opt) {
+		if (opt->key == MARG_GRP)
+			continue;
+		if (marg_strncmp(opt->name, arg + 2, len) == 0 && (opt->name[len] == '\0' || opt->name[len] == '=')) {
+			if (equal_pos) {
 				if (opt->flags & OPTION_ARG || opt->flags & OPTION_ARG_REQUIRED)
 					opt->arg = equal_pos + 1;
 				else
@@ -53,9 +55,11 @@ static void handle_short_option(const struct marg* marg, const char* arg, struct
 	struct marg_option *opt;
 
 	for (const char *p = arg + 1; *p != '\0'; ++p) {
-		for(opt = marg->options; opt->key != 0; ++opt) {
-			if(opt->key == *p) {
-				if((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG)) {
+		if (opt->key == MARG_GRP)
+			continue;
+		for (opt = marg->options; opt->key != 0; ++opt) {
+			if (opt->key == *p) {
+				if ((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG)) {
 					if (*(p + 1) != '\0') {
 						opt->arg = p + 1;
 						while(*(p + 1) != '\0') ++p;
