@@ -70,6 +70,10 @@ all: $(NAME)
 $(NAME): $(OBJ)
 	$(AR) $(ARFLAGS) $@ $^
 
+PHONY += debug
+debug:: CFLAGS += -g3
+debug:: $(NAME)
+
 PHONY += sanitize
 ifeq ($(UNAME_S),Linux)
 sanitize:: CFLAGS += -g3 -fsanitize=address -fsanitize=leak -fsanitize=undefined -fsanitize=bounds -fsanitize=null
