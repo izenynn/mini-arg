@@ -55,9 +55,9 @@ static void handle_short_option(const struct marg* marg, const char* arg, struct
 	struct marg_option *opt;
 
 	for (const char *p = arg + 1; *p != '\0'; ++p) {
-		if (opt->key == MARG_GRP)
-			continue;
 		for (opt = marg->options; opt->key != 0; ++opt) {
+			if (opt->key == MARG_GRP)
+				continue;
 			if (opt->key == *p) {
 				if ((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG)) {
 					if (*(p + 1) != '\0') {
