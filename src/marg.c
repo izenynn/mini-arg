@@ -32,8 +32,11 @@ static void handle_long_option(const struct marg* marg, const char* arg, struct 
 				else
 					marg_error(state, "option '%s' doesn't allow an argument", arg);
 			} else {
-				if ((opt->flags & OPTION_ARG_REQUIRED || opt->flags & OPTION_ARG)
-						&& (state->next + 1) < state->argc
+				if ((state->next + 1) < state->argc
+					   && opt->flags & OPTION_ARG_REQUIRED) {
+					opt->arg = state->argv[++state->next];
+				} else if ((state->next + 1) < state->argc
+						&& opt->flags & OPTION_ARG
 						&& state->argv[state->next + 1][0] != '-')
 					opt->arg = state->argv[++state->next];
 				else if (opt->flags & OPTION_ARG_REQUIRED)
@@ -64,7 +67,10 @@ static void handle_short_option(const struct marg* marg, const char* arg, struct
 						opt->arg = p + 1;
 						while(*(p + 1) != '\0') ++p;
 					} else if ((state->next + 1) < state->argc
-							&& state->argv[state->next + 1][0] != '-') {
+						   && opt->flags & OPTION_ARG_REQUIRED) {
+						opt->arg = state->argv[++state->next];
+					} else if ((state->next + 1) < state->argc
+						   && state->argv[state->next + 1][0] != '-') {
 						opt->arg = state->argv[++state->next];
 					} else if (opt->flags & OPTION_ARG_REQUIRED) {
 						marg_error(state, "option requires an argument '%s'", arg);
